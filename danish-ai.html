@@ -48,7 +48,13 @@ button{
   border-radius:8px;
   cursor:pointer;
   background:#38bdf8;
+  color:black;
   font-weight:bold;
+  transition:background 0.3s;
+}
+
+button:hover{
+  background:#0ea5e9;
 }
 
 .grid{
@@ -68,6 +74,22 @@ pre{
   padding:15px;
   border-radius:10px;
   overflow:auto;
+  max-height:300px;
+}
+
+.status{
+  padding:10px;
+  border-radius:8px;
+  margin:10px 0;
+  background:#0f172a;
+}
+
+.success{
+  color:#22c55e;
+}
+
+.error{
+  color:#ef4444;
 }
 </style>
 </head>
@@ -75,49 +97,53 @@ pre{
 <body>
 
 <header>
-<h1>DANISH AI</h1>
+<h1>🚀 DANISH AI Dashboard</h1>
 <p>Search • Code • Translate • Knowledge Hub</p>
 </header>
 
 <div class="container">
 
 <div class="search-box">
-<input id="query" placeholder="Search DANISH AI">
+<input id="query" placeholder="Search DANISH AI...">
 <button onclick="searchAI()">Search</button>
 </div>
 
 <div class="grid">
 
 <div class="card">
-<h3>Code Generator</h3>
-<textarea id="prompt" rows="5"
-placeholder="Describe application"></textarea>
+<h3>🔍 Search</h3>
+<textarea id="searchInput" rows="4" placeholder="Enter search query"></textarea>
+<button onclick="searchAI()">Search</button>
+</div>
+
+<div class="card">
+<h3>💻 Code Generator</h3>
+<textarea id="prompt" rows="4" placeholder="Describe application..."></textarea>
 <button onclick="generateCode()">Generate</button>
 </div>
 
 <div class="card">
-<h3>Translator</h3>
-<textarea id="translateInput" rows="5"
-placeholder="Enter text/code"></textarea>
+<h3>🌐 Translator</h3>
+<textarea id="translateInput" rows="4" placeholder="Enter text to translate..."></textarea>
 <button onclick="translateText()">Translate</button>
 </div>
 
 <div class="card">
-<h3>Knowledge Query</h3>
-<textarea id="knowledgeInput" rows="5"
-placeholder="Ask DANISH AI"></textarea>
+<h3>📚 Knowledge Query</h3>
+<textarea id="knowledgeInput" rows="4" placeholder="Ask DANISH AI..."></textarea>
 <button onclick="knowledgeQuery()">Ask</button>
 </div>
 
 <div class="card">
-<h3>System Status</h3>
-<button onclick="systemStatus()">Check</button>
+<h3>⚙️ System Status</h3>
+<p>Check server health and status</p>
+<button onclick="systemStatus()">Check Status</button>
 </div>
 
 </div>
 
-<h2>Output</h2>
-
+<h2>📊 Output</h2>
+<div class="status" id="statusBox">Waiting for input...</div>
 <pre id="output">Ready...</pre>
 
 </div>
@@ -127,75 +153,119 @@ placeholder="Ask DANISH AI"></textarea>
 const API="http://localhost:3000";
 
 async function searchAI(){
-
-try{
-
-const response=await fetch(
-API+"/api/search",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-query:document.getElementById("query").value
-})
-}
-);
-
-const data=await response.json();
-
-document.getElementById("output").textContent=
-JSON.stringify(data,null,2);
-
-}catch(err){
-document.getElementById("output").textContent=
-err.message;
-}
-
+  const query = document.getElementById("searchInput").value;
+  if(!query) {
+    document.getElementById("output").textContent="Please enter a search query";
+    return;
+  }
+  try{
+    document.getElementById("statusBox").className="status";
+    document.getElementById("statusBox").textContent="Searching...";
+    const response=await fetch(API+"/api/search",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({query:query})
+    });
+    const data=await response.json();
+    document.getElementById("statusBox").className="status success";
+    document.getElementById("statusBox").textContent="✓ Search completed";
+    document.getElementById("output").textContent=JSON.stringify(data,null,2);
+  }catch(err){
+    document.getElementById("statusBox").className="status error";
+    document.getElementById("statusBox").textContent="✗ Error: "+err.message;
+    document.getElementById("output").textContent=err.message;
+  }
 }
 
 async function generateCode(){
-
-document.getElementById("output").textContent=
-"Backend endpoint /api/code/generate required";
-
+  const prompt = document.getElementById("prompt").value;
+  if(!prompt) {
+    document.getElementById("output").textContent="Please enter a prompt";
+    return;
+  }
+  try{
+    document.getElementById("statusBox").className="status";
+    document.getElementById("statusBox").textContent="Generating code...";
+    const response=await fetch(API+"/api/code/generate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:prompt})
+    });
+    const data=await response.json();
+    document.getElementById("statusBox").className="status success";
+    document.getElementById("statusBox").textContent="✓ Code generated";
+    document.getElementById("output").textContent=JSON.stringify(data,null,2);
+  }catch(err){
+    document.getElementById("statusBox").className="status error";
+    document.getElementById("statusBox").textContent="✗ Error: "+err.message;
+    document.getElementById("output").textContent=err.message;
+  }
 }
 
 async function translateText(){
-
-document.getElementById("output").textContent=
-"Backend endpoint /api/translate required";
-
+  const text = document.getElementById("translateInput").value;
+  if(!text) {
+    document.getElementById("output").textContent="Please enter text to translate";
+    return;
+  }
+  try{
+    document.getElementById("statusBox").className="status";
+    document.getElementById("statusBox").textContent="Translating...";
+    const response=await fetch(API+"/api/translate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text:text})
+    });
+    const data=await response.json();
+    document.getElementById("statusBox").className="status success";
+    document.getElementById("statusBox").textContent="✓ Translation complete";
+    document.getElementById("output").textContent=JSON.stringify(data,null,2);
+  }catch(err){
+    document.getElementById("statusBox").className="status error";
+    document.getElementById("statusBox").textContent="✗ Error: "+err.message;
+    document.getElementById("output").textContent=err.message;
+  }
 }
 
 async function knowledgeQuery(){
-
-document.getElementById("output").textContent=
-"Backend endpoint /api/knowledge/query required";
-
+  const query = document.getElementById("knowledgeInput").value;
+  if(!query) {
+    document.getElementById("output").textContent="Please enter a question";
+    return;
+  }
+  try{
+    document.getElementById("statusBox").className="status";
+    document.getElementById("statusBox").textContent="Querying knowledge base...";
+    const response=await fetch(API+"/api/knowledge/query",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({query:query})
+    });
+    const data=await response.json();
+    document.getElementById("statusBox").className="status success";
+    document.getElementById("statusBox").textContent="✓ Query processed";
+    document.getElementById("output").textContent=JSON.stringify(data,null,2);
+  }catch(err){
+    document.getElementById("statusBox").className="status error";
+    document.getElementById("statusBox").textContent="✗ Error: "+err.message;
+    document.getElementById("output").textContent=err.message;
+  }
 }
 
 async function systemStatus(){
-
-try{
-
-const response=
-await fetch(API);
-
-const data=
-await response.json();
-
-document.getElementById("output").textContent=
-JSON.stringify(data,null,2);
-
-}catch(err){
-
-document.getElementById("output").textContent=
-err.message;
-
-}
-
+  try{
+    document.getElementById("statusBox").className="status";
+    document.getElementById("statusBox").textContent="Checking system status...";
+    const response=await fetch(API);
+    const data=await response.json();
+    document.getElementById("statusBox").className="status success";
+    document.getElementById("statusBox").textContent="✓ System is running";
+    document.getElementById("output").textContent=JSON.stringify(data,null,2);
+  }catch(err){
+    document.getElementById("statusBox").className="status error";
+    document.getElementById("statusBox").textContent="✗ Server connection failed";
+    document.getElementById("output").textContent="Error: "+err.message+"\n\nMake sure the server is running on port 3000";
+  }
 }
 
 </script>

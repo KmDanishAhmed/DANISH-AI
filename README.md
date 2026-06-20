@@ -141,10 +141,6 @@ If you encounter issues:
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
 
-## License
-
-MIT License - feel free to use this project for personal or commercial purposes.
-
 ## Author
 
 **Danish Ahmed KM**

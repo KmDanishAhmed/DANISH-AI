@@ -22,8 +22,12 @@ app.post('/api/search', (req, res) => {
   const { query } = req.body;
   res.json({
     success: true,
-    query: query,
-    results: ["Search API working", "Query processed: " + (query || "empty")]
+    query,
+    results: [
+      "Search API online",
+      "Future semantic search",
+      "Knowledge graph integration pending"
+    ]
   });
 });
 
@@ -32,31 +36,51 @@ app.post('/api/code/generate', (req, res) => {
   const { prompt } = req.body;
   res.json({
     success: true,
-    message: "Code generation endpoint",
-    prompt: prompt,
-    generatedCode: "// Generated code will appear here"
+    prompt,
+    generated: `// Generated starter code
+
+function app(){
+    console.log("DANISH AI");
+}`
   });
 });
 
 // Translation API
 app.post('/api/translate', (req, res) => {
-  const { text } = req.body;
+  const { code, source, target } = req.body;
+
+  let translated = code;
+
+  if (source === "javascript" && target === "python") {
+    translated = translated
+      .replace(/console\.log\((.*?)\);?/g, 'print($1)')
+      .replace(/const\s+/g, '')
+      .replace(/let\s+/g, '');
+  }
+
   res.json({
     success: true,
-    message: "Translation endpoint",
-    inputText: text,
-    translatedText: "Translation results will appear here"
+    translated
   });
 });
 
 // Knowledge Query API
 app.post('/api/knowledge/query', (req, res) => {
-  const { query } = req.body;
+  const { question } = req.body;
+
   res.json({
     success: true,
-    message: "Knowledge endpoint",
-    query: query,
-    knowledgeResults: "Knowledge base query results will appear here"
+    question,
+    answer: "Knowledge service connected."
+  });
+});
+
+// System Status
+app.get('/api/system/status', (req, res) => {
+  res.json({
+    success: true,
+    status: "running",
+    version: "1.0.0"
   });
 });
 

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DANISH AI Dashboard</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0b1120;
+  color:white;
+}
+
+header{
+  background:#111827;
+  padding:20px;
+  text-align:center;
+}
+
+h1{
+  color:#38bdf8;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.search-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+input, textarea, select{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#38bdf8;
+  font-weight:bold;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+}
+
+pre{
+  background:#111827;
+  padding:15px;
+  border-radius:10px;
+  overflow:auto;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>DANISH AI</h1>
+<p>Search • Code • Translate • Knowledge Hub</p>
+</header>
+
+<div class="container">
+
+<div class="search-box">
+<input id="query" placeholder="Search DANISH AI">
+<button onclick="searchAI()">Search</button>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<h3>Code Generator</h3>
+<textarea id="prompt" rows="5"
+placeholder="Describe application"></textarea>
+<button onclick="generateCode()">Generate</button>
+</div>
+
+<div class="card">
+<h3>Translator</h3>
+<textarea id="translateInput" rows="5"
+placeholder="Enter text/code"></textarea>
+<button onclick="translateText()">Translate</button>
+</div>
+
+<div class="card">
+<h3>Knowledge Query</h3>
+<textarea id="knowledgeInput" rows="5"
+placeholder="Ask DANISH AI"></textarea>
+<button onclick="knowledgeQuery()">Ask</button>
+</div>
+
+<div class="card">
+<h3>System Status</h3>
+<button onclick="systemStatus()">Check</button>
+</div>
+
+</div>
+
+<h2>Output</h2>
+
+<pre id="output">Ready...</pre>
+
+</div>
+
+<script>
+
+const API="http://localhost:3000";
+
+async function searchAI(){
+
+try{
+
+const response=await fetch(
+API+"/api/search",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+query:document.getElementById("query").value
+})
+}
+);
+
+const data=await response.json();
+
+document.getElementById("output").textContent=
+JSON.stringify(data,null,2);
+
+}catch(err){
+document.getElementById("output").textContent=
+err.message;
+}
+
+}
+
+async function generateCode(){
+
+document.getElementById("output").textContent=
+"Backend endpoint /api/code/generate required";
+
+}
+
+async function translateText(){
+
+document.getElementById("output").textContent=
+"Backend endpoint /api/translate required";
+
+}
+
+async function knowledgeQuery(){
+
+document.getElementById("output").textContent=
+"Backend endpoint /api/knowledge/query required";
+
+}
+
+async function systemStatus(){
+
+try{
+
+const response=
+await fetch(API);
+
+const data=
+await response.json();
+
+document.getElementById("output").textContent=
+JSON.stringify(data,null,2);
+
+}catch(err){
+
+document.getElementById("output").textContent=
+err.message;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
